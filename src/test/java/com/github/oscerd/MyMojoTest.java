@@ -52,8 +52,14 @@ public class MyMojoTest {
 		assertNotNull(outputDirectory);
 		assertTrue(outputDirectory.exists());
 
-		File schema = new File(outputDirectory, "user.avsc");
-		assertTrue(schema.exists());
+		File schemaAvro = new File(outputDirectory, "user.avsc");
+		assertTrue(schemaAvro.exists());
+		
+		File schemaJson = new File(outputDirectory, "user.json");
+		assertTrue(schemaJson.exists());
+		
+		File schemaProto = new File(outputDirectory, "user.proto");
+		assertTrue(schemaProto.exists());
 	}
 
 }

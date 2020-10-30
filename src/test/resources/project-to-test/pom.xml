@@ -20,7 +20,7 @@
           <outputDirectory>target/test-harness/project-to-test</outputDirectory>
           <inputClass>com.github.oscerd.User</inputClass>
           <fileNameSchema>user</fileNameSchema>
-          <schemaKind>avro,json</schemaKind>
+          <schemaKind>avro,json,proto</schemaKind>
         </configuration>
       </plugin>
     </plugins>

@@ -30,6 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.avro.AvroFactory;
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import com.fasterxml.jackson.dataformat.avro.schema.AvroSchemaGenerator;
+import com.fasterxml.jackson.dataformat.protobuf.ProtobufFactory;
+import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
+import com.fasterxml.jackson.dataformat.protobuf.schemagen.ProtobufSchemaGenerator;
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 
 import java.io.File;
@@ -74,6 +77,10 @@ public class GenerateSchemasMojo extends AbstractMojo {
 				String schemaWrapper = writeJsonSchema();
 				writeSchema(schemaWrapper, ".json");
 			}
+			if (s[i].equalsIgnoreCase("proto")) {
+				ProtobufSchema schemaWrapper = writeProtoSchema();
+				writeSchema(schemaWrapper.toString(), ".proto");
+			}
 		}
 	}
 
@@ -106,6 +113,24 @@ public class GenerateSchemasMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 		return jsonString;
+	}
+	
+	private ProtobufSchema writeProtoSchema() {
+		ObjectMapper mapper = new ObjectMapper(new ProtobufFactory());
+		ProtobufSchemaGenerator gen = new ProtobufSchemaGenerator();
+		try {
+			mapper.acceptJsonFormatVisitor(Class.forName(inputClass), gen);
+		} catch (JsonMappingException | ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		ProtobufSchema schemaWrapper = null;
+		try {
+			schemaWrapper = gen.getGeneratedSchema();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return schemaWrapper;
 	}
 
 	private void writeSchema(String content, String ext) throws MojoExecutionException {
