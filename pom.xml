@@ -22,6 +22,9 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.version>3.3.9</maven.version>
+    <jackson.dataformat.avro>2.11.3</jackson.dataformat.avro>
+    <jackson.dataformat.protobuf>2.11.3</jackson.dataformat.protobuf>
+    <jackson.dataformat.jsonschema>1.0.39</jackson.dataformat.jsonschema>
   </properties>
 
   <dependencies>
@@ -46,17 +49,17 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-avro</artifactId>
-      <version>2.11.3</version>
+      <version>${jackson.dataformat.avro}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-protobuf</artifactId>
-      <version>2.11.3</version>
+      <version>${jackson.dataformat.protobuf}</version>
     </dependency>
     <dependency>
       <groupId>com.kjetland</groupId>
       <artifactId>mbknor-jackson-jsonschema_2.13</artifactId>
-      <version>1.0.39</version>
+      <version>${jackson.dataformat.jsonschema}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
