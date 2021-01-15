@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -65,6 +66,12 @@ public class GenerateSchemasMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue = "avro", property = "schemaKind", required = true)
 	private String schemaKind;
+	
+    /**
+     * POM
+     */
+	@Parameter( defaultValue = "${project}", readonly = true )
+	MavenProject project;
 
 	public void execute() throws MojoExecutionException {
 		String[] s = schemaKind.split(",");
