@@ -16,6 +16,7 @@
  */
 package com.github.oscerd;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -34,11 +35,14 @@ import com.fasterxml.jackson.dataformat.avro.schema.AvroSchemaGenerator;
 import com.fasterxml.jackson.dataformat.protobuf.ProtobufFactory;
 import com.fasterxml.jackson.dataformat.protobuf.schema.ProtobufSchema;
 import com.fasterxml.jackson.dataformat.protobuf.schemagen.ProtobufSchemaGenerator;
+import com.github.oscerd.utils.KafkaDependencies;
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Goal which create a schema for a particular class
@@ -66,6 +70,11 @@ public class GenerateSchemasMojo extends AbstractMojo {
 	 */
 	@Parameter(defaultValue = "avro", property = "schemaKind", required = true)
 	private String schemaKind;
+	/**
+	 * Skip check for kafka dependencies or not
+	 */
+	@Parameter(defaultValue = "true", property = "skipCheckKafkaDependencies")
+	private boolean skipCheckKafkaDependencies;
 	
     /**
      * POM
@@ -74,6 +83,9 @@ public class GenerateSchemasMojo extends AbstractMojo {
 	MavenProject project;
 
 	public void execute() throws MojoExecutionException {
+		if (!skipCheckKafkaDependencies) {
+		    checkKafkaDependencies();
+		}
 		String[] s = schemaKind.split(",");
 		for (int i = 0; i < s.length; i++) {
 			if (s[i].equalsIgnoreCase("avro")) {
@@ -88,6 +100,28 @@ public class GenerateSchemasMojo extends AbstractMojo {
 				ProtobufSchema schemaWrapper = writeProtoSchema();
 				writeSchema(schemaWrapper.toString(), ".proto");
 			}
+		}
+	}
+
+	private void checkKafkaDependencies() {
+		List<Dependency> deps = project.getDependencies();
+        List<Dependency> kafkaDependenciesList = KafkaDependencies.getInstance().getKafkaDeps();
+        boolean containsKafkaDep = false;
+        for (Iterator iterator = deps.iterator(); iterator.hasNext();) {
+			Dependency dependency = (Dependency) iterator.next();
+			for (Iterator iterator2 = kafkaDependenciesList.iterator(); iterator2.hasNext();) {
+				Dependency kafkaStaticDep = (Dependency) iterator2.next();
+				if (kafkaStaticDep.getArtifactId().equalsIgnoreCase(dependency.getArtifactId()) &&
+						kafkaStaticDep.getGroupId().equalsIgnoreCase(dependency.getGroupId())) {
+					containsKafkaDep = true;
+					break;
+				}
+			}
+		}
+		if (containsKafkaDep) {
+			getLog().info("The project contains Kafka dependencies");
+		} else {
+			getLog().info("The project doesn't contain Kafka dependencies");
 		}
 	}
 
